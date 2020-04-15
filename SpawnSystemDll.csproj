@@ -55,6 +55,7 @@
       <Content Include="SpawningSystem\Editor.meta" />
       <Content Include="SpawningSystem\Editor\SpawnerWindow.cs.meta" />
       <Content Include="SpawningSystem\ObjectSpawner.cs.meta" />
+      <Content Include="SpawningSystem\readme" />
       <Content Include="SpawningSystem\SpawnerManager.cs.meta" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
