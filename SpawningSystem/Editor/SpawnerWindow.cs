@@ -1,74 +1,80 @@
-﻿﻿using System;
+﻿// this script handles the custom editor window functionality
+// the values are directly linked with the ValuesSync script
+
+using SpawningSystem;
 using UnityEditor;
-using UnityEditor.Graphs;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace SpawningSystem.Editor
+namespace SpawnSystemDll.SpawningSystem.Editor
 {
     public class SpawnerWindow : EditorWindow
     {
-        UnityEditor.Editor _spawnerEditor;
-
-        //List's position
-        static Rect objectListRect = new Rect(460, 5, 230, 200);
+        //the variables are serialized so the data is saved when exiting the play mode
         
-        [SerializeField]private GameObject _spawner;
-        [SerializeField]private ValuesSync _valuesSync;
-        [SerializeField]private SerializedObject _valuesSyncSo = null;
+        //Reorderable list 
+        static Rect objectListRect = new Rect(460, 5, 230, 200);
+        [SerializeField]private ValuesSync valuesSync;
+        [SerializeField]private SerializedObject valuesSyncSo = null;
         private ReorderableList _percentList = null; 
         private ReorderableList _objectList = null;
-
-        [SerializeField]private GameObject _tempSpawner;
-        [SerializeField]private GameObject _actualSpawner;
+       
+        //Target instance
+        [SerializeField]private GameObject spawner;
+        [SerializeField]private GameObject tempSpawner;
+        [SerializeField]private GameObject actualSpawner;
         private static GameObject _instance;
 
-        [SerializeField] private float _range;
-        [SerializeField] private int _capacity;
-        [SerializeField]private bool _fixedTime;
-        [SerializeField] private bool _fixedRespawnTime;
-        [SerializeField] private bool _placeObjectButton;
-        [SerializeField] private bool _abortButton;
-        [SerializeField] private bool _newObjectButton;
-        
-        [SerializeField] private float xPos;
+       // [SerializeField] private float range;
+       // [SerializeField] private int capacity;
+       // [SerializeField]private bool fixedTime;
+       // [SerializeField] private bool fixedRespawnTime;
+       
+        [SerializeField]private float xPos;
         [SerializeField]private float yPos;
-        [SerializeField] private float zPos;
+        [SerializeField]private float zPos;
         [SerializeField]private string objName;
         [SerializeField]private bool exiting;
         [SerializeField]private bool objectPlaced;
         [SerializeField]private Vector2 scrollPosition;
-        
+        [SerializeField] private bool placeObjectButton;
+        [SerializeField] private bool abortButton;
+        [SerializeField] private bool newObjectButton;
+
+        #region Singleton
+        //singleton pattern was used to get only one instance
+        //of the temporary spawn object
         private void InstantiateTempObject()
         {
-            _tempSpawner = new GameObject("Temporary Spawn");
-            _tempSpawner.AddComponent<SpawnerManager>();
-            _tempSpawner.AddComponent<ValuesSync>();
-            _instance = _tempSpawner;
-            _spawner = _tempSpawner;
+            tempSpawner = new GameObject("Temporary Spawn");
+            tempSpawner.AddComponent<SpawnerManager>();
+            tempSpawner.AddComponent<ValuesSync>();
+            _instance = tempSpawner;
+            spawner = tempSpawner;
         }
 
         public static GameObject GetInstance()
         {
             if (_instance == null)
             {
-                _instance = new GameObject("Temporary spawner");
+                _instance = new GameObject("Temporary Spawn");
             }
             return _instance;
         }
+        #endregion
+        
 
-    
+        #region Callbacks
         
         private void OnEnable()
         {
             InstantiateTempObject();
 
-            objName = _spawner.name;
-            _valuesSync = _spawner.GetComponent<ValuesSync>();
-            _valuesSyncSo = new SerializedObject(_valuesSync);
+            objName = spawner.name;
+            valuesSync = spawner.GetComponent<ValuesSync>();
+            valuesSyncSo = new SerializedObject(valuesSync);
 
             GetInstance();
-
             CreateList();
         }
 
@@ -76,18 +82,12 @@ namespace SpawningSystem.Editor
         {
             GetInstance();
         }
-        
-        [MenuItem("Window/Spawn System Editor")]
-        //show the window
-        static void ShowWindow()
-        {
-           // GetWindow(typeof(SpawnerWindow));
-            GetWindowWithRect(typeof(SpawnerWindow), (new Rect(0, 0, 700, 350)), false, "Spawn System Editor");
-        }
 
         private void OnInspectorUpdate()
         {
-            if (!(_spawner.TryGetComponent(out SpawnerManager spawnerManager)))
+            // Checking if the allocated target contains the required component
+            // in this case the SpawnManager script
+            if (!(spawner.TryGetComponent(out SpawnerManager spawnerManager)))
             {
                 bool wrongGameObj = EditorUtility.DisplayDialog("Game Object not valid", "The assigned game object does " + 
                                                                                          "not contain the required script (Spawn Manager). " +
@@ -97,54 +97,56 @@ namespace SpawningSystem.Editor
          
                 if(wrongGameObj)
                 { 
-                    DestroyImmediate(_tempSpawner);
+                    DestroyImmediate(tempSpawner);
                     InstantiateTempObject();
                 }
                 else
                 {
-                    _spawner = null;
+                    spawner = null;
                 }
             }
         }
 
         private void OnGUI()
         {   
-            
+            //UI positioning and fields 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true, GUILayout.Width(450), GUILayout.Height(245));
+            //target field
             EditorGUILayout.LabelField("Select the target spawn", EditorStyles.boldLabel);
             EditorGUI.BeginChangeCheck();
-            _spawner = (GameObject) EditorGUILayout.ObjectField("Target", _spawner, typeof(GameObject), true);
+            spawner = (GameObject) EditorGUILayout.ObjectField("Target", spawner, typeof(GameObject), true);
             EditorGUILayout.Space();
-            _valuesSync.color = EditorGUILayout.ColorField("Gizmos area color",_valuesSync.color);
+            //Gizmos color
+            valuesSync.color = EditorGUILayout.ColorField("Gizmos area color",valuesSync.color);
             if (EditorGUI.EndChangeCheck())
             {
-                _valuesSync = _spawner.GetComponent<ValuesSync>();
-                _valuesSyncSo = new SerializedObject(_valuesSync);
+                valuesSync = spawner.GetComponent<ValuesSync>();
+                valuesSyncSo = new SerializedObject(valuesSync);
                 CreateList();
-                objName = _spawner.name;
+                objName = spawner.name;
             }
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(); 
             
-           //CreatePreview();
+            //other fields
            CreateLinkedFields();
            CreateGameObjectFields();
            GUILayout.EndScrollView();
            
+           //buttons
            GUILayout.BeginArea(new Rect(30, 240, 400, 150));
            CreateButtons();
            GUILayout.EndArea();
-           
+           //text box
            GUILayout.BeginArea(new Rect(440, 255, 250, 150));
-            InfoSpawner();
+           InfoSpawner();
            GUILayout.EndArea();
 
-           
-           
-            if (_valuesSyncSo != null)
+           //updating the reorderable list
+           if (valuesSyncSo != null)
             {
-                _valuesSyncSo.Update();
+                valuesSyncSo.Update();
                 _objectList.DoList(objectListRect);
-                _valuesSyncSo.ApplyModifiedProperties();
+                valuesSyncSo.ApplyModifiedProperties();
             }
 
             ButtonChecks();
@@ -152,7 +154,8 @@ namespace SpawningSystem.Editor
         
         private void OnDestroy()
         {
-
+            //when exiting, check if the object created was placed or not
+            //and display a prompt message
             if (!objectPlaced)
             {
                 exiting = EditorUtility.DisplayDialog("Exit Spawn Editor?", "The unplaced spawn will be lost. " +
@@ -167,19 +170,29 @@ namespace SpawningSystem.Editor
                 else
 
                 {
-                    DestroyImmediate(_tempSpawner);
+                    DestroyImmediate(tempSpawner);
                 }
 
             }
         }
+        #endregion
+       
+        //Creating the window
+        [MenuItem("Window/Spawn System Editor")]
+        static void ShowWindow()
+        {
+            GetWindowWithRect(typeof(SpawnerWindow), (new Rect(0, 0, 700, 350)), false, "Spawn System Editor");
+        }
+       
+   
+ 
 
         #region UI Fields
-
         private void CreateList()
         {
-          
-            _objectList = new ReorderableList(_valuesSyncSo, _valuesSyncSo.FindProperty("objects"), true, true, true, true);
-            _percentList = new ReorderableList(_valuesSyncSo, _valuesSyncSo.FindProperty("percentages"), true, true, true,
+            //reorderable list functionality
+            _objectList = new ReorderableList(valuesSyncSo, valuesSyncSo.FindProperty("objects"), true, true, true, true);
+            _percentList = new ReorderableList(valuesSyncSo, valuesSyncSo.FindProperty("percentages"), true, true, true,
                 true);
 
             _objectList.drawHeaderCallback = rect =>
@@ -207,50 +220,72 @@ namespace SpawningSystem.Editor
         {   
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("General Settings", EditorStyles.boldLabel);
-            _valuesSync.use2Drange = EditorGUILayout.Toggle("2D space / vertical", _valuesSync.use2Drange);
-            _valuesSync.range = EditorGUILayout.Slider("Area size: ", _valuesSync.range, 1, 1000);
             EditorGUI.BeginChangeCheck();
-            _valuesSync.numberOfObjects = EditorGUILayout.IntField("Number of objects: ", _valuesSync.numberOfObjects);
+            valuesSync.use2Drange = EditorGUILayout.Toggle("Use 2D / vertical space?", valuesSync.use2Drange);
+            //2D settings
+            EditorGUILayout.LabelField("2D settings", EditorStyles.label);
+            EditorGUI.BeginDisabledGroup(!valuesSync.use2Drange);
+            valuesSync.xRange2d = EditorGUILayout.Slider("X Range: ", valuesSync.xRange2d, 1, 1000);
+            valuesSync.yRange2d = EditorGUILayout.Slider("Y Range: ", valuesSync.yRange2d, 1, 1000);
+            EditorGUI.EndDisabledGroup();
+
+            //3D distance
+            EditorGUILayout.LabelField("3D settings", EditorStyles.label);
+            EditorGUI.BeginDisabledGroup(valuesSync.use2Drange);
+            valuesSync.xRange3d = EditorGUILayout.Slider("X Range ", valuesSync.xRange3d, 1, 1000);
+            valuesSync.zRange3d = EditorGUILayout.Slider("Z Range ", valuesSync.zRange3d, 1, 1000);
+            EditorGUI.EndDisabledGroup();
+           
+            valuesSync.numberOfObjects = EditorGUILayout.IntField("Number of objects: ", valuesSync.numberOfObjects);
             if (EditorGUI.EndChangeCheck())
             {
-                float area = Mathf.Pow(_valuesSync.range * 2, 2) - Mathf.Pow(2, 2);
                 //one third of the area can be populated only to avoid CPU burn
+                float area;
+                if (!valuesSync.use2Drange)
+                {
+                    area = valuesSync.xRange3d * valuesSync.zRange3d;
+                }
+                else
+                {
+                    area = valuesSync.xRange2d * valuesSync.yRange2d;
+                }
                 float maxEnemies = area / 3;
                 int maxIntEnemies = Mathf.FloorToInt(maxEnemies);
 
-                if (_valuesSync.numberOfObjects > maxEnemies)
-                {
-                    bool exceededNumber = EditorUtility.DisplayDialog("Too many objects for this spawn", "The number assigned exceeds the capacity of this spawn." +
-                                                                                                         " Spawn capacity is: " + maxIntEnemies.ToString() + ". Please enlarge " +
-                                                                                                         "the spawn area or reduce the number of enemies.", 
+                //if the value is over the limits, display a prompt message
+                if (valuesSync.numberOfObjects > maxEnemies)
+                { 
+                    EditorUtility.DisplayDialog("Too many objects for this spawn", "The number assigned exceeds the capacity of this spawn." +
+                                                                                 " Spawn capacity is: " + maxIntEnemies.ToString() + ". Please enlarge " +
+                                                                                 "the spawn area or reduce the number of enemies.", 
                         "Continue");
-
-                   
-                        _valuesSync.numberOfObjects = maxIntEnemies;
+                    
+                    valuesSync.numberOfObjects = maxIntEnemies;
                 }
             }
             
             EditorGUILayout.Space();
             
+            //spawn parameters' fields
             #region Spawn
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Spawn options",  EditorStyles.boldLabel);
-            var valuesSyncMaxTime = _valuesSync.maxTime;
-            var valuesSyncMinTime = _valuesSync.minTime;
-            _valuesSync.fixedSpawnTime = EditorGUILayout.Toggle("Fixed spawn interval?", _valuesSync.fixedSpawnTime);
+            var valuesSyncMaxTime = valuesSync.maxTime;
+            var valuesSyncMinTime = valuesSync.minTime;
+            valuesSync.fixedSpawnTime = EditorGUILayout.Toggle("Fixed spawn interval?", valuesSync.fixedSpawnTime);
             
-            EditorGUI.BeginDisabledGroup(!_valuesSync.fixedSpawnTime);
-            _valuesSync.spawnTime = EditorGUILayout.FloatField("Time: ",  _valuesSync.spawnTime);
+            EditorGUI.BeginDisabledGroup(!valuesSync.fixedSpawnTime);
+            valuesSync.spawnTime = EditorGUILayout.FloatField("Time: ",  valuesSync.spawnTime);
             
             EditorGUI.EndDisabledGroup();
             
-            EditorGUI.BeginDisabledGroup(_valuesSync.fixedSpawnTime);
+            EditorGUI.BeginDisabledGroup(valuesSync.fixedSpawnTime);
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
             EditorGUILayout.LabelField("Range:");
             EditorGUILayout.MinMaxSlider(ref valuesSyncMinTime, ref valuesSyncMaxTime, 0.1f, 60f);
-            _valuesSync.minTime = valuesSyncMinTime;
-            _valuesSync.maxTime = valuesSyncMaxTime;
+            valuesSync.minTime = valuesSyncMinTime;
+            valuesSync.maxTime = valuesSyncMaxTime;
             EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical();
             EditorGUILayout.LabelField("Min time:" + valuesSyncMinTime.ToString());
@@ -260,38 +295,39 @@ namespace SpawningSystem.Editor
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.Space();
             #endregion
-
+            
+            //re-spawn parameters' fields
             #region Respawn
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Respawn options", EditorStyles.boldLabel);
             
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Respawn if objects are destroyed?");
-            _valuesSync.respawn =EditorGUILayout.Toggle(_valuesSync.respawn);
+            valuesSync.respawn =EditorGUILayout.Toggle(valuesSync.respawn);
            EditorGUILayout.EndHorizontal();
            
-            EditorGUI.BeginDisabledGroup(!_valuesSync.respawn);
+            EditorGUI.BeginDisabledGroup(!valuesSync.respawn);
             
-            _valuesSync.deadObjects =
-                EditorGUILayout.IntField("Required dead objects:", _valuesSync.deadObjects);
-            var valuesRespawnMinTime = _valuesSync.respawnMinTime;
-            var valuesRespawnMaxTime = _valuesSync.respawnMaxTime;
-            _valuesSync.fixedRespawnTime = EditorGUILayout.Toggle("Fixed respawn interval?", _valuesSync.fixedRespawnTime);
-            EditorGUI.BeginDisabledGroup(!_valuesSync.fixedRespawnTime);
-            _valuesSync.respawnTime = EditorGUILayout.FloatField("Respawn Time:",  _valuesSync.respawnTime);
+            valuesSync.deadObjects =
+                EditorGUILayout.IntField("Required dead objects:", valuesSync.deadObjects);
+            var valuesRespawnMinTime = valuesSync.respawnMinTime;
+            var valuesRespawnMaxTime = valuesSync.respawnMaxTime;
+            valuesSync.fixedRespawnTime = EditorGUILayout.Toggle("Fixed respawn interval?", valuesSync.fixedRespawnTime);
+            EditorGUI.BeginDisabledGroup(!valuesSync.fixedRespawnTime);
+            valuesSync.respawnTime = EditorGUILayout.FloatField("Respawn Time:",  valuesSync.respawnTime);
             EditorGUI.EndDisabledGroup();
            
-            EditorGUI.BeginDisabledGroup(_valuesSync.fixedRespawnTime);
+            EditorGUI.BeginDisabledGroup(valuesSync.fixedRespawnTime);
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
             EditorGUILayout.LabelField("Range:");
             EditorGUILayout.MinMaxSlider(ref valuesRespawnMinTime, ref valuesRespawnMaxTime, 0.1f, 100f);
-            _valuesSync.respawnMinTime = valuesRespawnMinTime;
-            _valuesSync.respawnMaxTime = valuesRespawnMaxTime;
+            valuesSync.respawnMinTime = valuesRespawnMinTime;
+            valuesSync.respawnMaxTime = valuesRespawnMaxTime;
             EditorGUILayout.EndVertical();
             EditorGUILayout.BeginVertical();
             EditorGUILayout.LabelField("Min time:" + valuesRespawnMinTime.ToString());
-            EditorGUILayout.LabelField("Max time:" + valuesRespawnMinTime.ToString());
+            EditorGUILayout.LabelField("Max time:" + valuesRespawnMaxTime.ToString());
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
             EditorGUI.EndDisabledGroup();
@@ -299,25 +335,15 @@ namespace SpawningSystem.Editor
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.Space();
             #endregion
-            
-            
         }
-
-        private void CreateButtons()
-        {
-            EditorGUILayout.Space();
-           // EditorGUILayout.BeginHorizontal();
-            _placeObjectButton = GUILayout.Button("\nPlace Spawner in scene\n");
-           // _abortButton = GUILayout.Button("\nAbort Settings\n");
-           // EditorGUILayout.EndHorizontal();
-            _newObjectButton = GUILayout.Button("\nNew spawner instance\n");
-        }
-
+       
+        //info text
         private void InfoSpawner()
         {
             EditorGUILayout.HelpBox("\nThank you for using Spawn Editor!\n \nPLEASE CLOSE THIS WINDOW BEFORE ENTERING PLAY MODE!\n", MessageType.Warning);
         }
-
+        
+        //game object name and position for the spawn object 
         private void CreateGameObjectFields()
         { 
             EditorGUILayout.Space();
@@ -330,43 +356,55 @@ namespace SpawningSystem.Editor
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.LabelField("Object name", EditorStyles.boldLabel);
             objName = EditorGUILayout.TextField( objName);
-
         }
 
         #endregion
-        
+
+        //button objects and functionality
+        #region Buttons
+        //buttons 
+        private void CreateButtons()
+        {
+            EditorGUILayout.Space();
+            placeObjectButton = GUILayout.Button("\nPlace Spawner in scene\n");
+            newObjectButton = GUILayout.Button("\nNew spawner instance\n");
+        }
         
         private void PlaceObject()
         {
-            _actualSpawner = _tempSpawner;
-            _actualSpawner.name = objName;
-            _actualSpawner.transform.position = new Vector3(xPos, yPos, zPos);
-            _spawner = _actualSpawner;
-            _valuesSync = _spawner.GetComponent<ValuesSync>();
-            _instance = _actualSpawner;
+            actualSpawner = tempSpawner;
+            actualSpawner.name = objName;
+            actualSpawner.transform.position = new Vector3(xPos, yPos, zPos);
+            spawner = actualSpawner;
+            valuesSync = spawner.GetComponent<ValuesSync>();
+            _instance = actualSpawner;
         }
 
         private void ButtonChecks()
         {
-            if (_placeObjectButton)
+            if (placeObjectButton)
             {
                 PlaceObject();
                 objectPlaced = true;
             }
 
-            if (_abortButton)
+            if (abortButton)
             {
-                DestroyImmediate(_tempSpawner);
+                DestroyImmediate(tempSpawner);
                 Close();
             }
 
-            if (_newObjectButton)
+            if (newObjectButton)
             {
                 InstantiateTempObject();
             }
         }
+
+        #endregion
         
         
+        //initially planned to exist, a preview was no longer
+        //necessary since the spawn area could be viewed in the scene editor
         /*private void CreatePreview()
         {
             //do I need a prev?

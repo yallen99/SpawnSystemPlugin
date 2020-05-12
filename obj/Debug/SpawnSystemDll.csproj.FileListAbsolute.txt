@@ -30,7 +30,6 @@ D:\University\LEVEL 5\Semester 2\Adv Programming\Spawn System Project\SpawnSyste
 D:\University\LEVEL 5\Semester 2\Adv Programming\Spawn System Project\SpawnSystemDll\bin\Debug\UnityEditor.xml
 D:\University\LEVEL 5\Semester 2\Adv Programming\Spawn System Project\SpawnSystemDll\bin\Debug\UnityEngine.xml
 D:\University\LEVEL 5\Semester 2\Adv Programming\Spawn System Project\SpawnSystemDll\obj\Debug\SpawnSystemDll.csprojAssemblyReference.cache
-D:\University\LEVEL 5\Semester 2\Adv Programming\Spawn System Project\SpawnSystemDll\obj\Debug\SpawnSystemDll.csproj.CoreCompileInputs.cache
 D:\University\LEVEL 5\Semester 2\Adv Programming\Spawn System Project\SpawnSystemDll\obj\Debug\SpawnSystemDll.csproj.CopyComplete
 D:\University\LEVEL 5\Semester 2\Adv Programming\Spawn System Project\SpawnSystemDll\obj\Debug\SpawnSystemDll.dll
 D:\University\LEVEL 5\Semester 2\Adv Programming\Spawn System Project\SpawnSystemDll\obj\Debug\SpawnSystemDll.pdb

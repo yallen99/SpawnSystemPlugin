@@ -18,6 +18,7 @@
         <e p="Editor.meta" t="Include" />
         <e p="ObjectSpawner.cs" t="Include" />
         <e p="ObjectSpawner.cs.meta" t="Include" />
+        <e p="readme" t="Include" />
         <e p="SpawnerManager.cs" t="Include" />
         <e p="SpawnerManager.cs.meta" t="Include" />
       </e>

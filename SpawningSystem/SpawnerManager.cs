@@ -1,4 +1,12 @@
-﻿﻿using System;
+﻿
+//This file contains 2 scripts for the ease of access
+//the first script is holding the variables
+//the second is holding the spawn functionality
+
+//The reason the 2 classes are separated is that
+//the variables script needs to be executed in edit mode
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using SpawningSystem;
@@ -13,8 +21,11 @@ namespace SpawningSystem
     {
         [HideInInspector]public List<GameObject> objects = new List<GameObject>(3); 
         [HideInInspector]public int[] percentages;
-        [HideInInspector]public float range;
+        [HideInInspector] public float xRange3d;
+        [HideInInspector] public float zRange3d;
         [HideInInspector] public bool use2Drange;
+        [HideInInspector] public float xRange2d;
+        [HideInInspector] public float yRange2d;
         [HideInInspector]public int numberOfObjects;
         [HideInInspector]public float minTime;
         [HideInInspector]public float maxTime;
@@ -28,68 +39,9 @@ namespace SpawningSystem
         [HideInInspector]public bool respawn;
         [HideInInspector]public Color color = Color.yellow;
 
-        /*
-        public bool Respawn
-        {
-            get => respawn;
-            set => respawn = value;
-        }
-
-        public int DeadObjects
-        {
-            get => deadObjects;
-            set => deadObjects = value;
-        }
-
-        public float Range
-        {
-            get => range;
-            set => range = value;
-        }
-
-        public int NumberOfObjects
-        {
-            get => numberOfObjects;
-            set => numberOfObjects = value;
-        }
-
-        public float MinTime
-        {
-            get => minTime;
-            set => minTime = value;
-        }
-
-        public float MaxTime
-        {
-            get => maxTime;
-            set => maxTime = value;
-        }
-
-        public float RespawnMinTime
-        {
-            get => respawnMinTime;
-            set => respawnMinTime = value;
-        }
-
-        public float RespawnMaxTime
-        {
-            get => respawnMaxTime;
-            set => respawnMaxTime = value;
-        }
-
-        public Color Color
-        {
-            get => color;
-            set => color = value;
-        }
-        */
-
-        /*private void OnEnable()
-        {
-            objects = new List<GameObject>(1);
-            percentages[0] = 0;
-        }*/
-
+        
+        // OnValidate and Gizmos methods which were previously used in
+        // the ObjectSpawner script, that is no more in use
         private void OnValidate()
         {
             if ( percentages != null && percentages.Length != objects.Count)
@@ -97,32 +49,33 @@ namespace SpawningSystem
                 percentages = new int[objects.Capacity];
             }
         }
+        
         #region Gizmos
         private void OnDrawGizmos()
         {
             Gizmos.color = color;
             if (!use2Drange)
             {
-                Gizmos.DrawWireCube(transform.position, new Vector3(range * 2, 0, range * 2));
+                Gizmos.DrawWireCube(transform.position, new Vector3(xRange3d * 2, 0, zRange3d * 2));
             }
             else
             {
-                Gizmos.DrawWireCube(transform.position, new Vector3(range * 2, range * 2, 0));
+                Gizmos.DrawWireCube(transform.position, new Vector3(xRange2d * 2, yRange2d * 2, 0));
 
             }
         }
         #endregion
     }
-    }
+}
     
     public class SpawnerManager : MonoBehaviour
     {
-        private int _minEnemyDistance = 1;
+        private int _minObjectDistance = 1;
         private ValuesSync _valuesSync;
-        private float randomTime;
-        private float randomRespawnTime;
+        private float _randomTime;
+        private float _randomRespawnTime;
         private bool _isSpawning;
-        private List<GameObject> _currentlySpawnedEnemies = new List<GameObject>();
+        private List<GameObject> _currentlySpawnedObjects = new List<GameObject>();
 
         private void Start()
         {
@@ -131,6 +84,7 @@ namespace SpawningSystem
         }
 
 
+        #region Re-spawn functionality
         private void Update()
         {
             if (!_isSpawning && _valuesSync.respawn)
@@ -139,25 +93,30 @@ namespace SpawningSystem
             }
         }
 
-
+        // this method checks if any of the objects were destroyed
+        // and adds them again to be re-spawned 
         private void CheckForDeadObjects()
         {
-            for (int i = _currentlySpawnedEnemies.Count -1; i>=0; i--)
+            for (int i = _currentlySpawnedObjects.Count -1; i>=0; i--)
             {
 
-                if (_currentlySpawnedEnemies[i] == null) 
+                if (_currentlySpawnedObjects[i] == null) 
                 {
                     _valuesSync.numberOfObjects++;
-                    _currentlySpawnedEnemies.Remove(_currentlySpawnedEnemies[i]);
+                    _currentlySpawnedObjects.Remove(_currentlySpawnedObjects[i]);
                 }
                 
             }
-            
-            
         }
+        #endregion
+       
+        
+        //the fundamental coroutine which directs the spawning
+        //  according to the time set
         private IEnumerator StartSpawning()
         {
-            _isSpawning = true;
+            // spawning
+             _isSpawning = true;
              while (_valuesSync.numberOfObjects > 0)
              {
                  _isSpawning = false;
@@ -167,8 +126,8 @@ namespace SpawningSystem
 
                 if (!_valuesSync.fixedSpawnTime)
                 {
-                    randomTime = Random.Range((float) _valuesSync.minTime, _valuesSync.maxTime);
-                    yield return new WaitForSeconds(randomTime);
+                    _randomTime = Random.Range(_valuesSync.minTime, _valuesSync.maxTime);
+                    yield return new WaitForSeconds(_randomTime);
                 }
 
                 else
@@ -176,104 +135,42 @@ namespace SpawningSystem
                     yield return new WaitForSeconds(_valuesSync.spawnTime);
                 }
             }
-
-            /*if (_valuesSync.numberOfObjects <= 0)
-            {
-                _isSpawning = false;
-            }*/
-            
+             
+            // re-spawning (if applies)
             yield return new WaitUntil(() => _valuesSync.numberOfObjects >= _valuesSync.deadObjects);
             if (!_valuesSync.fixedRespawnTime)
             {
-                randomRespawnTime = Random.Range((float) _valuesSync.respawnMinTime, _valuesSync.respawnMaxTime);
-                yield return new WaitForSeconds(randomRespawnTime);
+                _randomRespawnTime = Random.Range(_valuesSync.respawnMinTime, _valuesSync.respawnMaxTime);
+                yield return new WaitForSeconds(_randomRespawnTime);
             }
 
             else
             {
                 yield return  new WaitForSeconds(_valuesSync.respawnTime);
             }
-
+            
+            // the coroutine needs to be recursive to spawn all the objects
             StartCoroutine(StartSpawning());
         }
 
+        // instantiating the object as a child of the spawn object
+        // at a valid position
         private void SpawnEnemy(GameObject enemy)
         {
             var spawnPos = GetSpawnPosition();
             var child = Instantiate(enemy, spawnPos, Quaternion.identity);
+            child.name = enemy.name;
             child.transform.parent = this.transform;
-            _currentlySpawnedEnemies.Add(child); 
+            _currentlySpawnedObjects.Add(child); 
         }
 
-
-        #region Check for empty slot
-
-        private Vector3 GetSpawnPosition()
-        {
-            bool isPositionValid = true;
-            Vector3 spawnPos;
-            //2D / 3D switch
-            if (!_valuesSync.use2Drange)
-            {
-                do
-                {
-                    Vector3 distance = new Vector3(GetSpawnDistance(), 0, GetSpawnDistance());
-                    spawnPos = transform.position + distance;
-                    isPositionValid = IsSpawnPositionValid(spawnPos);
-                } while (isPositionValid == false);
-            }
-            else
-            {
-                do
-                {
-                    Vector3 distance = new Vector3(GetSpawnDistance(), GetSpawnDistance(), 0);
-                    spawnPos = transform.position + distance;
-                    isPositionValid = IsSpawnPositionValid(spawnPos);
-                } while (isPositionValid == false);
-            }
-            return  spawnPos;
-        }
-
-        private bool IsSpawnPositionValid(Vector3 spawnPos)
-        {
-            if (_currentlySpawnedEnemies.Count >= 2)
-            {
-                foreach (GameObject enemy in _currentlySpawnedEnemies)
-                {
-                    if (enemy != null)
-                    {
-                        if (Vector3.Distance(enemy.transform.position, spawnPos) < _minEnemyDistance)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            return true;
-        }
-
-
-        #endregion
-       
-        private float GetSpawnDistance()
-        {
-            int sign = Random.Range(-1, 1);
-            if (sign == -1)
-            {
-                return Random.Range((float) -1, -_valuesSync.range);
-            }
-            else
-            {
-                return Random.Range((float) 1, _valuesSync.range);
-            }
-        }
-        
-        
-        
+        // the segment rarity system based on which the object is extracted to spawn
         private GameObject GetEnemyToSpawn()
         {
             int rarityValue = Random.Range(1, 101);
+            
+            // initially the system was hardcoded due to testing and research purposes
+            // the segments were [1,60], [60,90], [90,95] and [95,100]
             
             /*if (rarityValue >=1 && rarityValue <60)
             {
@@ -297,6 +194,9 @@ namespace SpawningSystem
 
             return editor.enemies[0];*/
 
+            
+            //later implementation, flexible and based on the percentages values
+            //it assigns the object
             int[] segments = new int [_valuesSync.percentages.Length];
             for (int j = 0; j < segments.Length; j++)
             {
@@ -315,6 +215,108 @@ namespace SpawningSystem
             }
             return _valuesSync.objects[0];
         }
+        
+        
+        // this section focuses on getting a valid place to spawn the object
+        #region Check for empty slot
+       
+        //the positions were split between
+        private Vector3 GetSpawnPosition()
+        {
+            bool isPositionValid = true;
+            Vector3 spawnPos;
+            //2D / 3D switch
+            if (!_valuesSync.use2Drange)
+            {
+                do
+                {
+                    Vector3 distance = new Vector3(Get3dSpawnDistanceX(), 0, Get3dSpawnDistanceZ());
+                    spawnPos = transform.position + distance;
+                    isPositionValid = IsSpawnPositionValid(spawnPos);
+                } while (isPositionValid == false);
+            }
+            else
+            {
+                do
+                {
+                    Vector3 distance = new Vector3(Get2dSpawnDistanceX(), Get2dSpawnDistanceY(), 0);
+                    spawnPos = transform.position + distance;
+                    isPositionValid = IsSpawnPositionValid(spawnPos);
+                } while (isPositionValid == false);
+            }
+            return  spawnPos;
+        }
+
+        // applying the distance between objects
+        private bool IsSpawnPositionValid(Vector3 spawnPos)
+        {
+            if (_currentlySpawnedObjects.Count >= 2)
+            {
+                foreach (GameObject obj in _currentlySpawnedObjects)
+                {
+                    if (obj != null)
+                    {
+                        if (Vector3.Distance(obj.transform.position, spawnPos) < _minObjectDistance)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+        #endregion
+
+        
+        //this section is creating the width and length of the area
+        // on both 3D and 2D dimensions according to the sign ( +, -)
+        #region Area Dimensions
+        private float Get3dSpawnDistanceX()
+        {
+            int sign = Random.Range(-1, 1);
+            if (sign == -1)
+            {
+                return Random.Range((float) -1, -_valuesSync.xRange3d);
+            }
+            return Random.Range((float) 1, _valuesSync.xRange3d);
+        }
+
+        private float Get3dSpawnDistanceZ()
+        {
+            int sign = Random.Range(-1, 1);
+            if (sign == -1)
+            {
+                return Random.Range((float) -1, -_valuesSync.zRange3d);
+            }
+            return Random.Range((float) 1, _valuesSync.zRange3d);
+        }
+
+        
+        private float Get2dSpawnDistanceX()
+        {
+            int sign = Random.Range(-1, 1);
+            if (sign == -1)
+            {
+                return Random.Range((float) -1, -_valuesSync.xRange2d);
+            }
+            return Random.Range((float) 1, _valuesSync.xRange2d);
+        }
+        
+        private float Get2dSpawnDistanceY()
+        {
+            int sign = Random.Range(-1, 1);
+            if (sign == -1)
+            { 
+                return Random.Range((float) -1, -_valuesSync.yRange2d);
+            }
+            return Random.Range((float) 1, _valuesSync.yRange2d);
+        }
+        #endregion
+
+        
+        
+       
         
   
     
