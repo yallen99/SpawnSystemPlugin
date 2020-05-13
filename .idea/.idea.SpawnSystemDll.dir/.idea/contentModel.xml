@@ -12,15 +12,16 @@
       </e>
       <e p="SpawningSystem" t="Include">
         <e p="Editor" t="Include">
-          <e p="SpawnerWindow.cs" t="Include" />
+          <e p="SpawnEditorWindow.cs" t="Include" />
           <e p="SpawnerWindow.cs.meta" t="Include" />
+          <e p="SpawnTutorialWindow.cs" t="Include" />
         </e>
         <e p="Editor.meta" t="Include" />
-        <e p="ObjectSpawner.cs" t="Include" />
         <e p="ObjectSpawner.cs.meta" t="Include" />
         <e p="readme" t="Include" />
-        <e p="SpawnerManager.cs" t="Include" />
         <e p="SpawnerManager.cs.meta" t="Include" />
+        <e p="SpawnInspectorValues.cs" t="Include" />
+        <e p="SpawnManager.cs" t="Include" />
       </e>
       <e p="SpawnSystemDll.csproj" t="IncludeRecursive" />
     </e>

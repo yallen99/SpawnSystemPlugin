@@ -4,16 +4,13 @@
 //uncomment for better read
 
 /*
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
-namespace SpawningSystem
+namespace SpawnSystemDll.SpawningSystem
 {
     [ExecuteInEditMode]
-    public class ObjectSpawner : MonoBehaviour
+    public class SpawnInspectorValues : MonoBehaviour
     {
         
         //using tooltips, spaces and headers the inspector serialized
@@ -134,21 +131,21 @@ namespace SpawningSystem
 
             //first attempt to sync the objects list with percentages list
             
-            /*if (objects.Count - percentages.Count > 0)
-            {
-                for (int i = 1; i <= Mathf.Abs(objects.Count - percentages.Count); i++)
-                {
-                    percentages.Add(0);
-                }
-            } 
-            if (objects.Count - percentages.Count < 0)
-            {
-                for (int i = 1; i <= Mathf.Abs(objects.Count - percentages.Count) ; i++)
-                {
-                    percentages.Remove(percentages.Last());
-                }
-            }
-
+          //  if (objects.Count - percentages.Count > 0)
+          //  {
+          //      for (int i = 1; i <= Mathf.Abs(objects.Count - percentages.Count); i++)
+           //     {
+           //         percentages.Add(0);
+          //      }
+           // } 
+         //   if (objects.Count - percentages.Count < 0)
+         //   {
+          //      for (int i = 1; i <= Mathf.Abs(objects.Count - percentages.Count) ; i++)
+          //      {
+           //         percentages.Remove(percentages.Last());
+           //     }
+          //  }
+          
             //second attempt to sync the objects list with the percentages array
             if (percentages.Length != objects.Count)
             {

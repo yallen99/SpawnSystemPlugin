@@ -1,14 +1,16 @@
 ﻿// this script handles the custom editor window functionality
 // the values are directly linked with the ValuesSync script
 
+using System;
 using SpawningSystem;
+using SpawningSystem.Editor;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
 namespace SpawnSystemDll.SpawningSystem.Editor
 {
-    public class SpawnerWindow : EditorWindow
+    public class SpawnEditorWindow : EditorWindow
     {
         //the variables are serialized so the data is saved when exiting the play mode
         
@@ -25,11 +27,6 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         [SerializeField]private GameObject actualSpawner;
         private static GameObject _instance;
 
-       // [SerializeField] private float range;
-       // [SerializeField] private int capacity;
-       // [SerializeField]private bool fixedTime;
-       // [SerializeField] private bool fixedRespawnTime;
-       
         [SerializeField]private float xPos;
         [SerializeField]private float yPos;
         [SerializeField]private float zPos;
@@ -41,13 +38,26 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         [SerializeField] private bool abortButton;
         [SerializeField] private bool newObjectButton;
 
+        #region HelpButtons
+
+        private SpawnTutorialWindow _tutorialWindow;
+        private SpawnTutorialWindow.States _states;
+        private bool _generalHelp;
+        private bool _areaHelp;
+        private bool _timeHelp;
+        
+
+        #endregion
+        
+        
         #region Singleton
-        //singleton pattern was used to get only one instance
-        //of the temporary spawn object
+        //singleton pattern was used to:
+        //get only one instance of the temporary spawn object
+        //open only one Tutorial Window if the user needs help
         private void InstantiateTempObject()
         {
             tempSpawner = new GameObject("Temporary Spawn");
-            tempSpawner.AddComponent<SpawnerManager>();
+            tempSpawner.AddComponent<SpawnManager>();
             tempSpawner.AddComponent<ValuesSync>();
             _instance = tempSpawner;
             spawner = tempSpawner;
@@ -60,6 +70,22 @@ namespace SpawnSystemDll.SpawningSystem.Editor
                 _instance = new GameObject("Temporary Spawn");
             }
             return _instance;
+        }
+
+        //Creating a single tutorial window and focusing on it
+        public void GetTutorialInstance(SpawnTutorialWindow.States state)
+        {
+            if (_tutorialWindow == null)
+            {
+                
+                _tutorialWindow = CreateWindow<SpawnTutorialWindow>();
+                _tutorialWindow._states = state;
+            }
+            else
+            {
+                FocusWindowIfItsOpen<SpawnTutorialWindow>();
+                _tutorialWindow._states = state;
+            }
         }
         #endregion
         
@@ -87,7 +113,7 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         {
             // Checking if the allocated target contains the required component
             // in this case the SpawnManager script
-            if (!(spawner.TryGetComponent(out SpawnerManager spawnerManager)))
+            if (!(spawner.TryGetComponent(out SpawnManager spawnerManager)))
             {
                 bool wrongGameObj = EditorUtility.DisplayDialog("Game Object not valid", "The assigned game object does " + 
                                                                                          "not contain the required script (Spawn Manager). " +
@@ -112,12 +138,19 @@ namespace SpawnSystemDll.SpawningSystem.Editor
             //UI positioning and fields 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true, GUILayout.Width(450), GUILayout.Height(245));
             //target field
-            EditorGUILayout.LabelField("Select the target spawn", EditorStyles.boldLabel);
+            GUILayout.BeginHorizontal();
+            GUILayout.BeginArea(new Rect(3, 3,15,15));
+            _generalHelp = GUILayout.Button("?", EditorStyles.miniButton);
+            GUILayout.EndArea();
+            EditorGUILayout.LabelField("    Select the target spawn", EditorStyles.boldLabel);
+            GUILayout.EndHorizontal();
+            EditorGUILayout.Space();
             EditorGUI.BeginChangeCheck();
             spawner = (GameObject) EditorGUILayout.ObjectField("Target", spawner, typeof(GameObject), true);
             EditorGUILayout.Space();
             //Gizmos color
             valuesSync.color = EditorGUILayout.ColorField("Gizmos area color",valuesSync.color);
+
             if (EditorGUI.EndChangeCheck())
             {
                 valuesSync = spawner.GetComponent<ValuesSync>();
@@ -133,7 +166,7 @@ namespace SpawnSystemDll.SpawningSystem.Editor
            GUILayout.EndScrollView();
            
            //buttons
-           GUILayout.BeginArea(new Rect(30, 240, 400, 150));
+           GUILayout.BeginArea(new Rect(15, 250, 400, 150));
            CreateButtons();
            GUILayout.EndArea();
            //text box
@@ -151,7 +184,12 @@ namespace SpawnSystemDll.SpawningSystem.Editor
 
             ButtonChecks();
         }
-        
+
+        private void Update()
+        {
+            ActivateHelpButton();
+        }
+
         private void OnDestroy()
         {
             //when exiting, check if the object created was placed or not
@@ -178,15 +216,13 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         #endregion
        
         //Creating the window
-        [MenuItem("Window/Spawn System Editor")]
+        [MenuItem("Window/Spawn System Editor/Editor")]
         static void ShowWindow()
         {
-            GetWindowWithRect(typeof(SpawnerWindow), (new Rect(0, 0, 700, 350)), false, "Spawn System Editor");
+            GetWindowWithRect(typeof(SpawnEditorWindow), (new Rect(0, 0, 700, 350)), false, "Spawn System Editor");
         }
        
-   
- 
-
+        
         #region UI Fields
         private void CreateList()
         {
@@ -217,9 +253,14 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         }
 
         private void CreateLinkedFields()
-        {   
+        {
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("General Settings", EditorStyles.boldLabel);
+            
+            GUILayout.BeginArea(new Rect(3, 85,15,15));
+            _areaHelp = GUILayout.Button("?", EditorStyles.miniButton);
+            GUILayout.EndArea();
+            
+            EditorGUILayout.LabelField("    General Settings", EditorStyles.boldLabel);
             EditorGUI.BeginChangeCheck();
             valuesSync.use2Drange = EditorGUILayout.Toggle("Use 2D / vertical space?", valuesSync.use2Drange);
             //2D settings
@@ -269,6 +310,10 @@ namespace SpawnSystemDll.SpawningSystem.Editor
             //spawn parameters' fields
             #region Spawn
             EditorGUILayout.Space();
+            GUILayout.BeginArea(new Rect(3, 260,15,15));
+            _timeHelp = GUILayout.Button("?", EditorStyles.miniButton);
+            GUILayout.EndArea();
+            EditorGUILayout.LabelField("   Timings",  EditorStyles.boldLabel);
             EditorGUILayout.LabelField("Spawn options",  EditorStyles.boldLabel);
             var valuesSyncMaxTime = valuesSync.maxTime;
             var valuesSyncMinTime = valuesSync.minTime;
@@ -361,15 +406,17 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         #endregion
 
         //button objects and functionality
-        #region Buttons
+        #region Big Buttons
         //buttons 
         private void CreateButtons()
         {
-            EditorGUILayout.Space();
-            placeObjectButton = GUILayout.Button("\nPlace Spawner in scene\n");
-            newObjectButton = GUILayout.Button("\nNew spawner instance\n");
+            placeObjectButton = GUILayout.Button("\nPlace Spawn in scene\n");
+            newObjectButton = GUILayout.Button("\nNew Spawn instance\n");
         }
-        
+
+       
+        //transforming the temporary instance into a permanent one
+        //and moving it to the desired position
         private void PlaceObject()
         {
             actualSpawner = tempSpawner;
@@ -380,6 +427,7 @@ namespace SpawnSystemDll.SpawningSystem.Editor
             _instance = actualSpawner;
         }
 
+        //Button functionality
         private void ButtonChecks()
         {
             if (placeObjectButton)
@@ -397,6 +445,28 @@ namespace SpawnSystemDll.SpawningSystem.Editor
             if (newObjectButton)
             {
                 InstantiateTempObject();
+            }
+        }
+
+        #endregion
+
+        #region HelpButtons
+        
+        //Help buttons functionality is linked with the states in the
+        //tutorial window script
+        private void ActivateHelpButton()
+        {
+            if (_areaHelp)
+            {
+                GetTutorialInstance(SpawnTutorialWindow.States.Area);
+            }
+            else if (_generalHelp)
+            {
+                GetTutorialInstance(SpawnTutorialWindow.States.General);
+            }
+            else if (_timeHelp)
+            {
+                GetTutorialInstance(SpawnTutorialWindow.States.Time);
             }
         }
 

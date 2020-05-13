@@ -2,10 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f4137e55-506a-41a2-85c0-15553eef2afc" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/SpawningSystem/Editor/SpawnTutorialWindow.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SpawnSystemDll.dir/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpawnSystemDll.dir/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SpawnSystemDll.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpawnSystemDll.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SpawningSystem/Editor/SpawnerWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SpawningSystem/Editor/SpawnerWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SpawningSystem/SpawnerManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SpawningSystem/SpawnerManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SpawnSystemDll/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpawnSystemDll/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SpawnSystemDll.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SpawnSystemDll.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SpawningSystem/Editor/SpawnerWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SpawningSystem/Editor/SpawnEditorWindow.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SpawningSystem/ObjectSpawner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SpawningSystem/SpawnInspectorValues.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SpawningSystem/SpawnerManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SpawningSystem/SpawnManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Debug/SpawnSystemDll.dll" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/SpawnSystemDll.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Debug/SpawnSystemDll.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/SpawnSystemDll.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/SpawnSystemDll.dll" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/SpawnSystemDll.dll" afterDir="false" />
@@ -21,10 +25,9 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../../../Adv Gameplay/GAME/Tikki Studios/Assets/Scripts/Player Scripts/PlayerController.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/SpawningSystem/SpawnerManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/SpawningSystem/ObjectSpawner.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../SpawnDll Demo Game/Assets/Scripts/Enemy Scripts/3D/InteractionManager.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/SpawningSystem/Editor/SpawnerWindow.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/SpawningSystem/SpawnManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/SpawningSystem/Editor/SpawnTutorialWindow.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/SpawningSystem/Editor/SpawnEditorWindow.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -32,6 +35,8 @@
         <option value="$PROJECT_DIR$/SpawningSystem/SpawnerManager.cs" />
         <option value="$PROJECT_DIR$/../SpawnDll Demo Game/Assets/Scripts/Enemy Scripts/3D/InteractionManager.cs" />
         <option value="$PROJECT_DIR$/SpawningSystem/Editor/SpawnerWindow.cs" />
+        <option value="$PROJECT_DIR$/SpawningSystem/Editor/SpawnTutorialWindow.cs" />
+        <option value="$PROJECT_DIR$/SpawningSystem/Editor/SpawnEditorWindow.cs" />
       </list>
     </option>
   </component>
@@ -87,6 +92,7 @@
       <workItem from="1587501302901" duration="2265000" />
       <workItem from="1587509305373" duration="1007000" />
       <workItem from="1587551274549" duration="852000" />
+      <workItem from="1589370970520" duration="3707000" />
     </task>
     <servers />
   </component>

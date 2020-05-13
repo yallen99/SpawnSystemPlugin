@@ -68,7 +68,7 @@ namespace SpawningSystem
     }
 }
     
-    public class SpawnerManager : MonoBehaviour
+    public class SpawnManager : MonoBehaviour
     {
         private int _minObjectDistance = 1;
         private ValuesSync _valuesSync;
