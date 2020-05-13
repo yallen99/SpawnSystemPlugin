@@ -77,8 +77,7 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         {
             if (_tutorialWindow == null)
             {
-                
-                _tutorialWindow = CreateWindow<SpawnTutorialWindow>();
+                _tutorialWindow = CreateWindow<SpawnTutorialWindow>("Spawn System Tutorial");
                 _tutorialWindow._states = state;
             }
             else
@@ -102,6 +101,7 @@ namespace SpawnSystemDll.SpawningSystem.Editor
 
             GetInstance();
             CreateList();
+           
         }
 
         private void OnFocus()
@@ -408,10 +408,21 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         //button objects and functionality
         #region Big Buttons
         //buttons 
+        private GUIStyle _buttonStyle;
+        private void ButtonTextStyle()
+        {
+            _buttonStyle = GUI.skin.GetStyle("button");
+            _buttonStyle.alignment = TextAnchor.MiddleCenter;
+            _buttonStyle.fontStyle = FontStyle.Bold;
+            _buttonStyle.fontSize = 10;
+            _buttonStyle.normal.textColor = Color.blue;
+        }
+
         private void CreateButtons()
         {
-            placeObjectButton = GUILayout.Button("\nPlace Spawn in scene\n");
-            newObjectButton = GUILayout.Button("\nNew Spawn instance\n");
+            ButtonTextStyle();
+            placeObjectButton = GUILayout.Button("\nPlace Spawn in scene\n", _buttonStyle);
+            newObjectButton = GUILayout.Button("\nNew Spawn instance\n", _buttonStyle);
         }
 
        

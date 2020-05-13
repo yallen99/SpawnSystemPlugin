@@ -37,7 +37,7 @@ namespace SpawningSystem
         [HideInInspector]public bool fixedRespawnTime;
         [HideInInspector]public int deadObjects;
         [HideInInspector]public bool respawn;
-        [HideInInspector]public Color color = Color.yellow;
+        [HideInInspector]public Color color = Color.blue;
 
         
         // OnValidate and Gizmos methods which were previously used in

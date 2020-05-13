@@ -53,10 +53,7 @@ namespace SpawningSystem.Editor
         private void OnGUI()
         {
             //styles
-            TitleStyle();
-            SubtitleStyle();
-            ButtonTextStyle();
-            DescriptionTextStyle();
+            ApplyStyles();
             
             //title
             EditorGUILayout.Space();
@@ -98,6 +95,14 @@ namespace SpawningSystem.Editor
 
         //Custom styles applied to text
         #region GUI TextStyles
+
+        public void ApplyStyles()
+        {
+            TitleStyle();
+            ButtonTextStyle();
+            SubtitleStyle();
+            DescriptionTextStyle();
+        }
         private void TitleStyle()
         {
             _titleStyle = GUI.skin.GetStyle("tutorialTitle");
