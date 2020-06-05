@@ -34,9 +34,9 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         [SerializeField]private bool exiting;
         [SerializeField]private bool objectPlaced;
         [SerializeField]private Vector2 scrollPosition;
-        [SerializeField] private bool placeObjectButton;
-        [SerializeField] private bool abortButton;
-        [SerializeField] private bool newObjectButton;
+        [SerializeField]private bool placeObjectButton;
+        [SerializeField]private bool abortButton;
+        [SerializeField]private bool newObjectButton;
 
         #region HelpButtons
 
@@ -139,10 +139,8 @@ namespace SpawnSystemDll.SpawningSystem.Editor
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true, GUILayout.Width(450), GUILayout.Height(245));
             //target field
             GUILayout.BeginHorizontal();
-            GUILayout.BeginArea(new Rect(3, 3,15,15));
-            _generalHelp = GUILayout.Button("?", EditorStyles.miniButton);
-            GUILayout.EndArea();
-            EditorGUILayout.LabelField("    Select the target spawn", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Select the target spawn", EditorStyles.boldLabel);
+            _generalHelp = GUILayout.Button("Need help?", EditorStyles.miniButton);
             GUILayout.EndHorizontal();
             EditorGUILayout.Space();
             EditorGUI.BeginChangeCheck();
@@ -216,7 +214,7 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         #endregion
        
         //Creating the window
-        [MenuItem("Window/Spawn System Editor/Editor")]
+        [MenuItem("Window/Spawn System/Editor")]
         static void ShowWindow()
         {
             GetWindowWithRect(typeof(SpawnEditorWindow), (new Rect(0, 0, 700, 350)), false, "Spawn System Editor");
@@ -255,26 +253,24 @@ namespace SpawnSystemDll.SpawningSystem.Editor
         private void CreateLinkedFields()
         {
             EditorGUILayout.Space();
-            
-            GUILayout.BeginArea(new Rect(3, 85,15,15));
-            _areaHelp = GUILayout.Button("?", EditorStyles.miniButton);
-            GUILayout.EndArea();
-            
-            EditorGUILayout.LabelField("    General Settings", EditorStyles.boldLabel);
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Area Settings", EditorStyles.boldLabel);
+            _generalHelp = GUILayout.Button("Need help?", EditorStyles.miniButton);
+            GUILayout.EndHorizontal();
             EditorGUI.BeginChangeCheck();
             valuesSync.use2Drange = EditorGUILayout.Toggle("Use 2D / vertical space?", valuesSync.use2Drange);
             //2D settings
             EditorGUILayout.LabelField("2D settings", EditorStyles.label);
             EditorGUI.BeginDisabledGroup(!valuesSync.use2Drange);
-            valuesSync.xRange2d = EditorGUILayout.Slider("X Range: ", valuesSync.xRange2d, 1, 1000);
-            valuesSync.yRange2d = EditorGUILayout.Slider("Y Range: ", valuesSync.yRange2d, 1, 1000);
+            valuesSync.xRange2d = EditorGUILayout.Slider("X Size: ", valuesSync.xRange2d, 1, 1000);
+            valuesSync.yRange2d = EditorGUILayout.Slider("Y Size: ", valuesSync.yRange2d, 1, 1000);
             EditorGUI.EndDisabledGroup();
 
             //3D distance
             EditorGUILayout.LabelField("3D settings", EditorStyles.label);
             EditorGUI.BeginDisabledGroup(valuesSync.use2Drange);
-            valuesSync.xRange3d = EditorGUILayout.Slider("X Range ", valuesSync.xRange3d, 1, 1000);
-            valuesSync.zRange3d = EditorGUILayout.Slider("Z Range ", valuesSync.zRange3d, 1, 1000);
+            valuesSync.xRange3d = EditorGUILayout.Slider("X Size: ", valuesSync.xRange3d, 1, 1000);
+            valuesSync.zRange3d = EditorGUILayout.Slider("Z Size: ", valuesSync.zRange3d, 1, 1000);
             EditorGUI.EndDisabledGroup();
            
             valuesSync.numberOfObjects = EditorGUILayout.IntField("Number of objects: ", valuesSync.numberOfObjects);
@@ -310,11 +306,11 @@ namespace SpawnSystemDll.SpawningSystem.Editor
             //spawn parameters' fields
             #region Spawn
             EditorGUILayout.Space();
-            GUILayout.BeginArea(new Rect(3, 260,15,15));
-            _timeHelp = GUILayout.Button("?", EditorStyles.miniButton);
-            GUILayout.EndArea();
-            EditorGUILayout.LabelField("   Timings",  EditorStyles.boldLabel);
-            EditorGUILayout.LabelField("Spawn options",  EditorStyles.boldLabel);
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Timings",  EditorStyles.boldLabel);
+            _timeHelp = GUILayout.Button("Need Help?", EditorStyles.miniButton);
+            GUILayout.EndHorizontal();
+            EditorGUILayout.LabelField("Spawn Timings",  EditorStyles.boldLabel);
             var valuesSyncMaxTime = valuesSync.maxTime;
             var valuesSyncMinTime = valuesSync.minTime;
             valuesSync.fixedSpawnTime = EditorGUILayout.Toggle("Fixed spawn interval?", valuesSync.fixedSpawnTime);
@@ -327,7 +323,7 @@ namespace SpawnSystemDll.SpawningSystem.Editor
             EditorGUI.BeginDisabledGroup(valuesSync.fixedSpawnTime);
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
-            EditorGUILayout.LabelField("Range:");
+            EditorGUILayout.LabelField("Time Range:");
             EditorGUILayout.MinMaxSlider(ref valuesSyncMinTime, ref valuesSyncMaxTime, 0.1f, 60f);
             valuesSync.minTime = valuesSyncMinTime;
             valuesSync.maxTime = valuesSyncMaxTime;
@@ -344,7 +340,7 @@ namespace SpawnSystemDll.SpawningSystem.Editor
             //re-spawn parameters' fields
             #region Respawn
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Respawn options", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Respawn Options", EditorStyles.boldLabel);
             
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Respawn if objects are destroyed?");
@@ -365,7 +361,7 @@ namespace SpawnSystemDll.SpawningSystem.Editor
             EditorGUI.BeginDisabledGroup(valuesSync.fixedRespawnTime);
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
-            EditorGUILayout.LabelField("Range:");
+            EditorGUILayout.LabelField("Time Range:");
             EditorGUILayout.MinMaxSlider(ref valuesRespawnMinTime, ref valuesRespawnMaxTime, 0.1f, 100f);
             valuesSync.respawnMinTime = valuesRespawnMinTime;
             valuesSync.respawnMaxTime = valuesRespawnMaxTime;

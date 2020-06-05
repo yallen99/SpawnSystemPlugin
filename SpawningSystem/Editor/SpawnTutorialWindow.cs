@@ -44,7 +44,7 @@ namespace SpawningSystem.Editor
 
         public States _states;
         
-        [MenuItem("Window/Spawn System Editor/Tutorial")]
+        [MenuItem("Window/Spawn System/Tutorial")]
         static void ShowWindow()
         {
             GetWindowWithRect(typeof(SpawnTutorialWindow), (new Rect(0, 0, 700, 350)), false, "Spawn System Tutorial");

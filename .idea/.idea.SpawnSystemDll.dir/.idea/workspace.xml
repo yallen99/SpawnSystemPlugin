@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f4137e55-506a-41a2-85c0-15553eef2afc" name="Default Changelist" comment="Tutorial Window and Help Buttons">
+    <list default="true" id="f4137e55-506a-41a2-85c0-15553eef2afc" name="Default Changelist" comment="final touches">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SpawnSystemDll.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SpawnSystemDll.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SpawningSystem/Editor/SpawnEditorWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SpawningSystem/Editor/SpawnEditorWindow.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SpawningSystem/Editor/SpawnTutorialWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SpawningSystem/Editor/SpawnTutorialWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SpawningSystem/SpawnManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SpawningSystem/SpawnManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Debug/SpawnSystemDll.dll" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/SpawnSystemDll.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Debug/SpawnSystemDll.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Debug/SpawnSystemDll.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/obj/Debug/SpawnSystemDll.csprojAssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/SpawnSystemDll.csprojAssemblyReference.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/SpawnSystemDll.dll" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/SpawnSystemDll.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/obj/Debug/SpawnSystemDll.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/obj/Debug/SpawnSystemDll.pdb" afterDir="false" />
     </list>
@@ -91,7 +91,10 @@
       <workItem from="1587551274549" duration="852000" />
       <workItem from="1589370970520" duration="4630000" />
       <workItem from="1589378091929" duration="2000" />
-      <workItem from="1589378938111" duration="1223000" />
+      <workItem from="1589378938111" duration="1884000" />
+      <workItem from="1589404707603" duration="46000" />
+      <workItem from="1589919334175" duration="84000" />
+      <workItem from="1591275830149" duration="404000" />
     </task>
     <task id="LOCAL-00001" summary="Tutorial Window and Help Buttons">
       <created>1589377032530</created>
@@ -100,7 +103,14 @@
       <option name="project" value="LOCAL" />
       <updated>1589377032530</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="final touches">
+      <created>1589390894531</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1589390894531</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -123,12 +133,13 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Tutorial Window and Help Buttons" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tutorial Window and Help Buttons" />
+    <MESSAGE value="final touches" />
+    <option name="LAST_COMMIT_MESSAGE" value="final touches" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="361" y="146" key="Vcs.Push.Dialog.v2" timestamp="1589377080285">
+    <state x="361" y="146" key="Vcs.Push.Dialog.v2" timestamp="1589390897567">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="146" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1589377080285" />
+    <state x="361" y="146" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1589390897567" />
   </component>
 </project>
