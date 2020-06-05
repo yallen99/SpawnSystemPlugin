@@ -255,7 +255,7 @@ namespace SpawnSystemDll.SpawningSystem.Editor
             EditorGUILayout.Space();
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Area Settings", EditorStyles.boldLabel);
-            _generalHelp = GUILayout.Button("Need help?", EditorStyles.miniButton);
+            _areaHelp = GUILayout.Button("Need help?", EditorStyles.miniButton);
             GUILayout.EndHorizontal();
             EditorGUI.BeginChangeCheck();
             valuesSync.use2Drange = EditorGUILayout.Toggle("Use 2D / vertical space?", valuesSync.use2Drange);
